@@ -6,18 +6,16 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.text.DecimalFormat;
 
-public class BuyToyParams {
+public class BuyToyCalc {
 
     WebDriver driver;
 
     @Parameters({"url"})
-    @BeforeClass
+    @BeforeTest
     public void setUp(String url) {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
@@ -25,59 +23,54 @@ public class BuyToyParams {
         driver.get(url);
     }
 
-    @Parameters({"qty"})
-    @Test(priority = 100)
-    public void selectQuantity(String sqty){
+    @DataProvider (name="data-provider")
+    public Object[][] qtyNumber() {
+        Object[][] data = new Object[3][2];
+
+        data[0][0] = "//div/select/option[@value='1']";
+        data[0][1] = "20";
+
+        data[1][0] = "//div/select/option[@value='2']";
+        data[1][1] = "20";
+
+        data[2][0] = "//div/select/option[@value='3']";
+        data[2][1] = "20";
+
+        return data;
+    }
+    @Test (dataProvider = "data-provider")
+    public void selectQuantity(String sqty, String price){
+
         WebElement quantity = driver.findElement(By.xpath(sqty));
         quantity.click();
 
         WebElement buyNow = driver.findElement(By.xpath("//input[@type='submit']"));
         buyNow.click();
-    }
 
+        String qtyXpath = sqty.substring(28,29);
+        System.out.println("Quantity: " + qtyXpath);
 
-    @Test(priority = 200)
-    public String retrievePayAmount() {
+        // Retrieve system Payment Amount
         String payAmount = driver.findElement(By.xpath("//div/font[@color='red']")).getText().trim();
         System.out.println("Pay Amount: " + payAmount);
-        return payAmount;
-    }
 
-    @Parameters({"qty", "price"})
-    @Test(priority = 300)
-    public void verifyPayAmount(String qtyXpath, Integer price) {
-        String qtyNum = qtyXpath.substring(28,29);
-
-        Double qtyNumeric = price * Double.valueOf(qtyNum);
+        // Calculate Amount
+        Double qtyNumeric = Double.valueOf(price) * Double.valueOf(qtyXpath);
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
         String compAmount = "$" + decimalFormat.format(qtyNumeric);
         System.out.println("Computed Amount: " + compAmount);
 
-        Assert.assertEquals(retrievePayAmount(), compAmount);
-    }
+        Assert.assertEquals(payAmount, compAmount);
 
-    @Parameters({"card", "month", "year", "cvv"})
-    @Test(priority = 400)
-    public void provideCard(String card, String month, String year, String cvv) {
+        //Back to Home page
+        driver.findElement(By.linkText("Guru99 Payment Gateway")).click();
+        };
 
-        driver.findElement(By.name("card_nmuber")).sendKeys(card);
-        driver.findElement(By.xpath(month)).click();
-        driver.findElement(By.xpath(year)).click();
-        driver.findElement(By.id("cvv_code")).sendKeys(cvv);
-
-        driver.findElement(By.name("submit")).click();
-
-        String orderId = driver.findElement(By.xpath("//table[@class='alt access']/tbody/tr[1]/td[2]/h3/strong")).getText();
-
-        System.out.println("Order ID: " + orderId);
-
-    }
-
-    @Test(priority = 500)
+    @AfterTest
     public void tearDown() {
         driver.quit();
     }
-
-
 }
+
+
