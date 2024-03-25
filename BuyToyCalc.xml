@@ -4,16 +4,7 @@
     <parameter name="url" value="https://demo.guru99.com/payment-gateway/index.php"/>
     <test name="Buy Toy with Params">
         <classes>
-            <class name="PaymentGateway.BuyToyParams">
-                <parameter name="qty" value="//div/select/option[@value='2']"/>
-                <parameter name="price" value="20"/>
-
-                <!-- Card Details -->
-                <parameter name="card" value="4725891161854144"/>
-                <parameter name="month" value="//div/select/option[@value='2']"/>
-                <parameter name="year" value="//div/select/option[@value='2021']"/>
-                <parameter name="cvv" value="731"/>
-            </class>
+            <class name="PaymentGateway.BuyToyCalc"/>
         </classes>
     </test>
 </suite>
