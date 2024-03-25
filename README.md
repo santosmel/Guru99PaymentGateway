@@ -2,9 +2,9 @@
 
 ### Buying of Toy until Payment
 * Used Parameters for the input details.
-* Java and XML filename: BuyToyParams
+* Java and XML filename: **BuyToyParams**
 
 ### Testing of Quantity and Payment Amount
 * Testing that the calculation is correct based on the quantity provided.
 * Used Data Provider.
-* Java and XML filename: BuyToyCalc
+* Java and XML filename: **BuyToyCalc**
